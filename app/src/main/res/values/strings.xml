@@ -1,3 +1,10 @@
 <resources>
+    <!-- UI strings -->
     <string name="app_name">newsapp</string>
+    <string name="query_noresults">Sorry, no results.</string>
+    <string name="no_connection">There is no internet connection. Please check your settings.</string>
+    <string name="no_authors">Sorry! No authors listed.</string>
+
+    <!-- API Strings -->
+
 </resources>
