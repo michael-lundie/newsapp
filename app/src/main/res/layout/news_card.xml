@@ -7,11 +7,11 @@
 
     <android.support.v7.widget.CardView
         android:id="@+id/card_view"
+        cardPreventCornerOverlap="false"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        cardPreventCornerOverlap="false"
-        app:cardElevation="0dp"
-        android:layout_gravity="center">
+        android:layout_gravity="center"
+        app:cardElevation="0dp">
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -29,38 +29,41 @@
                     android:layout_height="match_parent"
                     android:adjustViewBounds="true"
                     android:background="?attr/selectableItemBackgroundBorderless"
-                    android:visibility="visible"
                     android:scaleType="centerCrop"
+                    android:visibility="visible"
                     tools:src="@drawable/news_item_dummy" />
+
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_gravity="bottom"
                     android:orientation="vertical">
+
                     <TextView
                         android:id="@+id/date"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:layout_gravity="bottom"
+                        android:layout_marginBottom="@dimen/half_padding"
                         android:layout_marginLeft="@dimen/default_padding"
                         android:layout_marginRight="@dimen/default_padding"
-                        android:layout_marginBottom="@dimen/half_padding"
-                        android:paddingTop="@dimen/text_padding"
+                        android:background="@color/colorAccent"
                         android:paddingBottom="@dimen/text_padding"
                         android:paddingLeft="@dimen/text_padding"
                         android:paddingRight="@dimen/text_padding"
-                        android:background="@color/colorAccent"
+                        android:paddingTop="@dimen/text_padding"
                         android:textSize="@dimen/author_textSize"
-                        android:layout_gravity="bottom"
                         tools:text="Feb 10, 2018" />
+
                     <TextView
                         android:id="@+id/title"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:paddingLeft="@dimen/title_padding"
                         android:layout_marginLeft="@dimen/default_padding"
                         android:layout_marginRight="@dimen/default_padding"
-                        android:paddingRight="@dimen/title_padding"
                         android:paddingBottom="@dimen/half_padding"
+                        android:paddingLeft="@dimen/title_padding"
+                        android:paddingRight="@dimen/title_padding"
                         android:textSize="@dimen/title_textSize"
                         tools:text="Not my Father" />
 
@@ -68,16 +71,16 @@
                         android:id="@+id/author"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:layout_gravity="bottom"
+                        android:layout_marginBottom="@dimen/half_padding"
                         android:layout_marginLeft="@dimen/default_padding"
                         android:layout_marginRight="@dimen/default_padding"
-                        android:layout_marginBottom="@dimen/half_padding"
-                        android:paddingTop="@dimen/text_padding"
+                        android:background="@color/colorWhite"
                         android:paddingBottom="@dimen/text_padding"
                         android:paddingLeft="@dimen/text_padding"
                         android:paddingRight="@dimen/text_padding"
-                        android:background="@color/colorWhite"
+                        android:paddingTop="@dimen/text_padding"
                         android:textSize="@dimen/author_textSize"
-                        android:layout_gravity="bottom"
                         tools:text="Darth Vader" />
                 </LinearLayout>
 
@@ -94,25 +97,27 @@
                 android:layout_width="match_parent"
                 android:layout_height="45dp"
                 android:orientation="horizontal">
+
                 <TextView
                     android:id="@+id/category"
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
                     android:layout_weight="2"
+                    android:background="@color/colorBlack"
                     android:gravity="center_vertical"
                     android:paddingLeft="@dimen/default_padding"
                     android:textColor="@color/colorWhite"
-                    android:background="@color/colorBlack"
-                    tools:text="Imperial Galactic News"/>
+                    tools:text="Imperial Galactic News" />
+
                 <TextView
                     android:id="@+id/browserLink"
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
                     android:background="@color/colorAccent"
-                    android:paddingLeft="@dimen/default_padding"
-                    android:paddingRight="@dimen/default_padding"
                     android:drawableLeft="@drawable/ic_open_in_browser_black_24dp"
-                    android:drawableStart="@drawable/ic_open_in_browser_black_24dp"/>
+                    android:drawableStart="@drawable/ic_open_in_browser_black_24dp"
+                    android:paddingLeft="@dimen/default_padding"
+                    android:paddingRight="@dimen/default_padding" />
 
             </LinearLayout>
         </LinearLayout>
