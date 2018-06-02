@@ -237,6 +237,7 @@ public class MainActivity extends AppCompatActivity  {
         CacheManager.getInstance().clear();
         //notify the adapter and scroll to position 0
         mAdapter.notifyDataSetChanged();
+        mRecyclerView.scrollToPosition(0);
         // Show our progress ring.
         mProgressRing.setVisibility(View.VISIBLE);
     }
