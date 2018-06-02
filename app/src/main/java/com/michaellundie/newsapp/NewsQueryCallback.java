@@ -23,9 +23,17 @@ public class NewsQueryCallback implements LoaderManager.LoaderCallbacks<ArrayLis
     private ProgressBar progressRing;
     private TextView emptyStateTextView;
     private RecycleViewWithSetEmpty.Adapter adapter;
-
     private NewsAsyncLoader mLoader;
 
+    /**
+     * Object constructor for this class.
+     * @param context The current context.
+     * @param connectURL the URL used to query the API
+     * @param list The ArrayList we will populate.
+     * @param adapter The RecyclerViewer Adapter to be used in conjunction with the loader.
+     * @param bar id of our ProgressBar view
+     * @param emptyStateView id of empty state text view in the custom RecycleView
+     */
     NewsQueryCallback(Context context, String connectURL, ArrayList<NewsItem> list,
                       RecycleViewWithSetEmpty.Adapter adapter, ProgressBar bar,
                       TextView emptyStateView) {

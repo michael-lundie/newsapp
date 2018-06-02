@@ -4,6 +4,7 @@ import android.content.AsyncTaskLoader;
 import android.content.Context;
 import android.text.TextUtils;
 import android.util.Log;
+
 import java.io.IOException;
 import java.util.ArrayList;
 
@@ -13,7 +14,7 @@ import java.util.ArrayList;
 public class NewsAsyncLoader extends AsyncTaskLoader<ArrayList<NewsItem>> {
 
     private static final String LOG_TAG = NewsAsyncLoader.class.getSimpleName();
-    private ArrayList<NewsItem> bookQueryResults = null;
+    private ArrayList<NewsItem> apiQueryResults = null;
     private String urlString;
 
     /**
@@ -29,14 +30,12 @@ public class NewsAsyncLoader extends AsyncTaskLoader<ArrayList<NewsItem>> {
     @Override
     protected void onStartLoading() {
         // Let's check for cached data
-        if (bookQueryResults !=null) {
+        if (apiQueryResults !=null) {
             //Use cached data
-            deliverResult(bookQueryResults);
-            Log.i(LOG_TAG, "TEST: BookSearchAsyncLoader: Delivering some cached data.");
+            deliverResult(apiQueryResults);
         } else {
             //There is no data so let's get the party started!
             forceLoad();
-            Log.i(LOG_TAG, "TEST: BookSearchAsyncLoader: onStartLoading executed");
         }
     }
 
@@ -52,7 +51,7 @@ public class NewsAsyncLoader extends AsyncTaskLoader<ArrayList<NewsItem>> {
                 ArrayList<NewsItem> resultItems = QueryUtils.fetchQueryResults(urlString);
                 if (resultItems != null) {
                     // Fetch results are not null. Assign to our return variable.
-                    bookQueryResults = resultItems;
+                    apiQueryResults = resultItems;
                 } else {
                     throw new IOException("No response received.");
                 }
@@ -60,7 +59,7 @@ public class NewsAsyncLoader extends AsyncTaskLoader<ArrayList<NewsItem>> {
                 Log.e("Log error", "Problem with Requested URL", e);
             }
         }
-        return bookQueryResults;
+        return apiQueryResults;
     }
 
     @Override

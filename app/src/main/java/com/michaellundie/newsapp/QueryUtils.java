@@ -6,6 +6,7 @@ import android.net.NetworkInfo;
 import android.net.Uri;
 import android.text.TextUtils;
 import android.util.Log;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -107,7 +108,6 @@ public final class QueryUtils {
         return extractNewsResults(jsonResponse);
     }
 
-    //TODO: Handle Null Pointer Exception
     /**
      * Checks to make sure the smart phone has access to the internet.
      * @param context the application context
@@ -206,6 +206,7 @@ public final class QueryUtils {
 
         // If the JSON string is empty or null, then return early.
         if (TextUtils.isEmpty(newsQueryJSON)) {
+
             return null;
         }
 
@@ -233,10 +234,6 @@ public final class QueryUtils {
                 String title = currentArticleJsonO.optString("webTitle");
 
                 String datePublished = currentArticleJsonO.optString("webPublicationDate");
-
-
-
-                Log.i(LOG_TAG, "TEST date QueryUtils:" + datePublished);
 
                 String articleURL = currentArticleJsonO.optString("webUrl");
 

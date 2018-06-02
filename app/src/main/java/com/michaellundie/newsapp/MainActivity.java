@@ -1,14 +1,12 @@
 package com.michaellundie.newsapp;
 
 import android.app.Activity;
-import android.app.Dialog;
 import android.app.LoaderManager;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.Resources;
 import android.preference.PreferenceManager;
 import android.support.design.widget.FloatingActionButton;
-import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.GridLayoutManager;
@@ -20,11 +18,12 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.ProgressBar;
 import android.widget.TextView;
-import android.widget.Toast;
 
-import java.net.URL;
 import java.util.ArrayList;
 
+/**
+ * Displays a list of news results, generated using the guardian news API.
+ */
 public class MainActivity extends AppCompatActivity  {
 
     public static final String LOG_TAG = MainActivity.class.getName();
@@ -43,9 +42,7 @@ public class MainActivity extends AppCompatActivity  {
     private ProgressBar mProgressRing;
     static boolean settingsChanged = false;
 
-    /**
-     * A boolean value representing indicating if this is the first time the app has been loaded.
-     */
+    /** A boolean value representing indicating if this is the first time the app has been loaded. */
     static boolean firstLoad = true;
 
     @Override
@@ -66,26 +63,6 @@ public class MainActivity extends AppCompatActivity  {
         //Set up the progress ring view
         mProgressRing = findViewById(R.id.progressRing);
 
-        /*// Setting up our FAB search button
-        FloatingActionButton searchDialogButton = findViewById(R.id.fab_search);
-        searchDialogButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                dialogActive = true;
-                boolean isConnected = QueryUtils.checkNetworkAccess(view.getContext());
-                if (!isConnected) {
-                    showToast(getResources().getString(R.string.no_connection));
-                } else {
-                    //Construct a search dialogue if none exists or if a dialog was open on rotation
-                    if (searchDialog == null) {
-                        searchDialog = searchDialogue();
-                    }
-                    //Show search dialogue
-                    searchDialog.show();
-
-                }
-            }
-        });*/
 
         //Check for a saved instance to handle rotation and resume
         if(savedInstanceState != null)
@@ -98,15 +75,15 @@ public class MainActivity extends AppCompatActivity  {
                 mList = new ArrayList<>();
             }
         }
-        // Get our default padding size and convert to pixels for the current device
 
+        // Get our default padding size and convert to pixels for the current device.
+        // This is used for our spannable string in our ViewAdapter
         Resources resources = getResources();
         // Receives float, but cast to int.
         int paddingInPixels = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP,
                 resources.getDimension(R.dimen.text_padding), resources.getDisplayMetrics());
-        Log.i(LOG_TAG, "TEST pixels:" + paddingInPixels);
 
-        // Create our new custom recycler adapter
+        // Initiate our new custom recycler adapter
         mAdapter = new NewsResultsViewAdapter(mList, this, paddingInPixels);
 
         //Check for screen orientation
@@ -122,6 +99,23 @@ public class MainActivity extends AppCompatActivity  {
             mRecyclerView.setAdapter(mAdapter);
         }
 
+        // Setting up our FAB refresh button
+        FloatingActionButton searchDialogButton = findViewById(R.id.fab_refresh);
+        searchDialogButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                boolean isConnected = QueryUtils.checkNetworkAccess(view.getContext());
+                if (firstLoad) {
+                    firstLoad = false;
+                    executeSearch();
+                } else {
+                    resetSearch();
+                    executeSearch();
+                }
+            }
+        });
+
+        // Check to see if it is the first time loading our app.
         if (firstLoad) {
             mProgressRing.setVisibility(View.VISIBLE);
             Log.i(LOG_TAG, "TEST: It's the first load");
@@ -136,30 +130,34 @@ public class MainActivity extends AppCompatActivity  {
         super.onPause();
     }
 
+    /**
+     * Override method allowing the passing of intent data when resuming our MainActivity,
+     * after accessing the SettingsActivity.
+     * @param requestCode Where is the request coming from?
+     * @param resultCode Was a result available?
+     * @param data Intent data includes a boolean value, representing the change status of settings.
+     */
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        Log.i(LOG_TAG, "TEST: On Activity Result called");
         if (requestCode == 1) {
             if(resultCode == Activity.RESULT_OK){
                 settingsChanged = data.getBooleanExtra("settingsChanged", false);
-                Log.i(LOG_TAG, "TEST: Settings changed is" + settingsChanged);
                 if (settingsChanged) {
+                    // Reset out settingsChanged variable
                     settingsChanged = false;
-                    // upon a new search initiation, destroy previous loader.
-                    getLoaderManager().destroyLoader(API_REQUEST_LOADER_ID);
-                    //clear the array list
-                    mList.clear();
-                    //clear our cache
-                    CacheManager.getInstance().clear();
-                    //notify the adapter and scroll to position 0
-                    mAdapter.notifyDataSetChanged();
-                    mProgressRing.setVisibility(View.VISIBLE);
+                    // reset search, destroying previous loader and cache
+                    resetSearch();
+                    // Begin our query using AsyncLoader
                     executeSearch();
                 }
             }
         }
     }
 
+    /**
+     * Allows seamless transition of our app between the various activity states.
+     * @param outState Contains the listArray data (if any) used to populate our RecycleViewer
+     */
     @Override
     protected void onSaveInstanceState(Bundle outState) {
         //Saving parcelable code adapted from : https://stackoverflow.com/a/12503875/9738433
@@ -186,6 +184,11 @@ public class MainActivity extends AppCompatActivity  {
         return super.onOptionsItemSelected(item);
     }
 
+    /**
+     * A method containing the necessary logic for executing a reliable API query, checking
+     * shared user preferences, if internet access is available and passing our query to the
+     * loader manager.
+     */
     public void executeSearch() {
 
         //Get user preferences
@@ -200,8 +203,6 @@ public class MainActivity extends AppCompatActivity  {
         // Build our Query URL
         String queryURL = QueryUtils.queryRequestBuilder(this, returnQuantity, returnOrder);
 
-        Log.i(LOG_TAG, "TEST: " + queryURL);
-
         // Create loader from class, as opposed to implementing the LoaderManager withing MainActivity
         // Used assistance and code from: https://stackoverflow.com/a/20839825
         newsQueryLoaderCallback = new NewsQueryCallback(this, queryURL, mList, mAdapter,
@@ -213,23 +214,30 @@ public class MainActivity extends AppCompatActivity  {
             // We already checked for connection, but just in case the user resumed while the dialog
             // was open, perhaps a double check is good here.
             mProgressRing.setVisibility(View.GONE);
+            mEmptyStateTextView.setText(getResources().getString(R.string.no_connection));
             mEmptyStateTextView.setVisibility(View.VISIBLE);
-            showToast(getResources().getString(R.string.no_connection));
         } else {
             // Looks like we are good to go.
             mEmptyStateTextView.setVisibility(View.GONE);
+            mEmptyStateTextView.setText(getResources().getString(R.string.query_noresults));
             // Let's get our loader manager hooked up and started
             getLoaderManager().initLoader(API_REQUEST_LOADER_ID, null, newsQueryLoaderCallback);
         }
     }
 
-    /*
-      Helper methods.
+    /**
+     * A method which resets our loader and clears cache to prepare the adapter for a new query.
      */
-    private void showToast(String toastMessage) {
-        Toast.makeText(this, toastMessage, Toast.LENGTH_SHORT).show();
-    }
-    private void setBackground(View view, int resourceID) {
-        view.setBackgroundDrawable(ContextCompat.getDrawable(this, resourceID));
+    private void resetSearch() {
+        // upon a new search initiation, destroy previous loader.
+        getLoaderManager().destroyLoader(API_REQUEST_LOADER_ID);
+        //clear the array list
+        mList.clear();
+        //clear our cache
+        CacheManager.getInstance().clear();
+        //notify the adapter and scroll to position 0
+        mAdapter.notifyDataSetChanged();
+        // Show our progress ring.
+        mProgressRing.setVisibility(View.VISIBLE);
     }
 }

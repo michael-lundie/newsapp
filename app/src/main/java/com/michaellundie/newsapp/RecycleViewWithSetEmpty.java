@@ -5,8 +5,10 @@ import android.support.v7.widget.RecyclerView;
 import android.util.AttributeSet;
 import android.view.View;
 
-// Recycler View with SetEmpty class: https://stackoverflow.com/a/30415582
-
+/**
+ * Recycler view with a 'set empty' view. Code from:
+ * Recycler View with SetEmpty class: https://stackoverflow.com/a/30415582
+ */
 public class RecycleViewWithSetEmpty extends RecyclerView {
     private View emptyView;
 

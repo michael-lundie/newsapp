@@ -1,7 +1,5 @@
 package com.michaellundie.newsapp;
 
-import android.content.AsyncTaskLoader;
-import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
@@ -11,15 +9,11 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
-
-// Image Async Downloader code primarily from:
-// https://android.jlelse.eu/async-loading-images-on-android-like-a-big-baws-fd97d1a91374
 
 /**
  * Async task for download images.
+ * Image Async Downloader code primarily from:
+ * https://android.jlelse.eu/async-loading-images-on-android-like-a-big-baws-fd97d1a91374
  */
 public class DownloadImageAsync extends AsyncTask<String, Void, Bitmap> {
 

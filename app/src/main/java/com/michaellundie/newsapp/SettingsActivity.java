@@ -18,13 +18,19 @@ import android.widget.Toast;
 import java.util.HashSet;
 import java.util.Set;
 
+/**
+ * Settings activity class allowing a user to alter various shared preferences.
+ */
 public class SettingsActivity extends AppCompatActivity {
 
     private static final String LOG_TAG = SettingsActivity.class.getSimpleName();
     private static boolean settingsChanged = false;
+    /** Stores the initial value (upon access of SettingActivity) of
+     * {@link QueryPreferenceFragment#returnQuantity}.*/
     private static String returnQuantityInitialValue;
+    /** Stores the initial value (upon access of SettingActivity) of
+     * {@link QueryPreferenceFragment#returnOrder}.*/
     private static String returnOrderInitialValue;
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -66,6 +72,11 @@ public class SettingsActivity extends AppCompatActivity {
 
         }
 
+        /**
+         * Links/Binds the UI description (through the use of a key value) with the current preference
+         * value.
+         * @param preference A preference object to bind
+         */
         private void bindPreferenceSummaryToValue(Preference preference) {
             preference.setOnPreferenceChangeListener(this);
             SharedPreferences preferences =

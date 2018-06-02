@@ -26,11 +26,11 @@
         android:layout_gravity="center_vertical|center_horizontal"
         android:visibility="invisible" />
 
- <!--   <android.support.design.widget.FloatingActionButton
-        android:id="@+id/fab_search"
+    <android.support.design.widget.FloatingActionButton
+        android:id="@+id/fab_refresh"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="end|bottom"
         android:layout_margin="16dp"
-        android:src="@drawable/ic_search_black_24dp" />-->
+        android:src="@drawable/ic_refresh_white_24dp" />
 </FrameLayout>

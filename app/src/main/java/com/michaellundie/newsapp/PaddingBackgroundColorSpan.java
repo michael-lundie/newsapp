@@ -5,9 +5,11 @@ import android.graphics.Paint;
 import android.graphics.Rect;
 import android.text.style.LineBackgroundSpan;
 
-// Padding background color span class from:
-// https://medium.com/@tokudu/android-adding-padding-to-backgroundcolorspan-179ab4fae187
-
+/**
+ * a Span class allowing a customised Background color span with padding to be implemented on our UI
+ * Class from
+ * https://medium.com/@tokudu/android-adding-padding-to-backgroundcolorspan-179ab4fae187
+ */
 public class PaddingBackgroundColorSpan implements LineBackgroundSpan {
     private int mBackgroundColor;
     private int mPadding;

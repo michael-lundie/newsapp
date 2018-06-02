@@ -46,8 +46,8 @@ public class NewsResultsViewAdapter extends RecyclerView.Adapter<NewsResultsView
         mValues = items;
         mContext = context;
         mPadding = padding;
-        /*nothumbnail = new BitmapDrawable(BitmapFactory.decodeResource
-                (mContext.getResources(), R.drawable.no_thumbnail));*/
+        nothumbnail = new BitmapDrawable(BitmapFactory.decodeResource
+                (mContext.getResources(), R.drawable.no_thumbnail));
     }
 
     @NonNull

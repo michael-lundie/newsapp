@@ -4,7 +4,6 @@ import android.os.Parcel;
 import android.os.Parcelable;
 
 import java.util.ArrayList;
-import java.util.Date;
 
 /*
  * A simple class to store and handle News Result data.
@@ -19,7 +18,16 @@ public class NewsItem implements Parcelable {
     private String articleURL;
     private int itemID;
 
-    //Default Constructor
+    /**
+     * Default object constructor for this class.
+     * @param title The title of our news article. String.
+     * @param authors An ArrayList of article authors.
+     * @param section The section name of the returned article.
+     * @param datePublished The published date of the returned article.
+     * @param thumbnailURL The URL of any linked image.
+     * @param articleURL The URL of the web version of this news article.
+     * @param itemID The unique itemID for this item.
+     */
     NewsItem(String title, ArrayList<String> authors, String section, String datePublished, String thumbnailURL, String articleURL,
              int itemID) {
         this.title = title;
@@ -31,7 +39,10 @@ public class NewsItem implements Parcelable {
         this.itemID = itemID;
     }
 
-    //Constructor object taking parcelable (from returned bundle on instanceSaved) as an argument.
+    /**
+     * Constructor taking parcelable (from returned bundle on instanceSaved) as an argument.
+     * @param in Parcel object data which has been Marshaled
+     */
     private NewsItem(Parcel in) {
         this.title = in.readString();
         this.authors = in.readArrayList(NewsItem.class.getClassLoader());

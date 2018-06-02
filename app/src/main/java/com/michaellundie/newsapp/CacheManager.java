@@ -1,13 +1,14 @@
 package com.michaellundie.newsapp;
 
-import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
-import android.os.Build;
 import android.util.Log;
 import android.util.LruCache;
 
-// Cache Manager code from https://stackoverflow.com/a/22855962
-
+/**
+ * Creates a cache manager allowing us to handle multiple images in cache and use them in
+ * conjunction with a recycler viewer.
+ * Cache Manager code from https://stackoverflow.com/a/22855962
+ */
 public class CacheManager {
 
     private static final String LOG_TAG = CacheManager.class.getSimpleName();
