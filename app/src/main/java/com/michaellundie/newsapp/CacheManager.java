@@ -25,7 +25,7 @@ public class CacheManager {
 
     private void init() {
         // Set up LruCache and assign our maximum cache size
-        mMemoryCache = new LruCache<Integer, BitmapDrawable>(4 * 1024 * 1024) {
+        mMemoryCache = new LruCache<Integer, BitmapDrawable>(8 * 1024 * 1024) {
             @Override
             protected int sizeOf(Integer key, BitmapDrawable bitmapDrawable) {
                 // The cache size will be measured in kilobytes rather than

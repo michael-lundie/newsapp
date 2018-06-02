@@ -1,35 +1,52 @@
 package com.michaellundie.newsapp;
 
+import android.app.Activity;
 import android.app.Dialog;
 import android.app.LoaderManager;
+import android.content.Intent;
+import android.content.SharedPreferences;
+import android.content.res.Resources;
+import android.preference.PreferenceManager;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
+import android.util.Log;
+import android.util.TypedValue;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import java.net.URL;
 import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity  {
 
     public static final String LOG_TAG = MainActivity.class.getName();
 
-    // Create Loader Manager as static, to prevent NPE onDestroy
-    // NOTE: I tried to find a better way to handle this - but so far unsuccessful.
+    /**
+     * Create Loader Manager as static, to prevent NPE onDestroy
+     * NOTE: I tried to find a better way to handle this - but so far unsuccessful.
+     */
     private static LoaderManager.LoaderCallbacks<ArrayList<NewsItem>> newsQueryLoaderCallback;
 
-    private RecycleViewWithSetEmpty mRecyclerView;
+    RecycleViewWithSetEmpty mRecyclerView;
     private RecycleViewWithSetEmpty.Adapter mAdapter;
     private ArrayList<NewsItem> mList = new ArrayList<>();
-    private static final int BOOKSEARCH_LOADER_ID = 1;
-    private static String GUARDIANAPI_REQUEST_URL = "http://content.guardianapis.com/search?show-tags=contributor&show-fields=thumbnail%2C%20author&page-size=10&q=technology&api-key=77f187f4-ede0-4ee7-a390-325df2d79fd3";
+    private static final int API_REQUEST_LOADER_ID = 1;
     private TextView mEmptyStateTextView;
     private ProgressBar mProgressRing;
+    static boolean settingsChanged = false;
 
+    /**
+     * A boolean value representing indicating if this is the first time the app has been loaded.
+     */
+    static boolean firstLoad = true;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -70,21 +87,27 @@ public class MainActivity extends AppCompatActivity  {
             }
         });*/
 
-
-
         //Check for a saved instance to handle rotation and resume
         if(savedInstanceState != null)
         {
             mList = savedInstanceState.getParcelableArrayList("mList");
             if (mList != null ) {
-                getLoaderManager().initLoader(BOOKSEARCH_LOADER_ID, null,
+                getLoaderManager().initLoader(API_REQUEST_LOADER_ID, null,
                         newsQueryLoaderCallback);
             } else {
                 mList = new ArrayList<>();
             }
         }
+        // Get our default padding size and convert to pixels for the current device
+
+        Resources resources = getResources();
+        // Receives float, but cast to int.
+        int paddingInPixels = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP,
+                resources.getDimension(R.dimen.text_padding), resources.getDisplayMetrics());
+        Log.i(LOG_TAG, "TEST pixels:" + paddingInPixels);
+
         // Create our new custom recycler adapter
-        mAdapter = new NewsResultsViewAdapter(mList, this);
+        mAdapter = new NewsResultsViewAdapter(mList, this, paddingInPixels);
 
         //Check for screen orientation
         int orientation = getResources().getConfiguration().orientation;
@@ -99,7 +122,13 @@ public class MainActivity extends AppCompatActivity  {
             mRecyclerView.setAdapter(mAdapter);
         }
 
-        executeSearch();
+        if (firstLoad) {
+            mProgressRing.setVisibility(View.VISIBLE);
+            Log.i(LOG_TAG, "TEST: It's the first load");
+            executeSearch();
+            firstLoad = false;
+            Log.i(LOG_TAG, "TEST: Fist load is now" +firstLoad);
+        }
     }
 
     @Override
@@ -107,11 +136,75 @@ public class MainActivity extends AppCompatActivity  {
         super.onPause();
     }
 
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        Log.i(LOG_TAG, "TEST: On Activity Result called");
+        if (requestCode == 1) {
+            if(resultCode == Activity.RESULT_OK){
+                settingsChanged = data.getBooleanExtra("settingsChanged", false);
+                Log.i(LOG_TAG, "TEST: Settings changed is" + settingsChanged);
+                if (settingsChanged) {
+                    settingsChanged = false;
+                    // upon a new search initiation, destroy previous loader.
+                    getLoaderManager().destroyLoader(API_REQUEST_LOADER_ID);
+                    //clear the array list
+                    mList.clear();
+                    //clear our cache
+                    CacheManager.getInstance().clear();
+                    //notify the adapter and scroll to position 0
+                    mAdapter.notifyDataSetChanged();
+                    mProgressRing.setVisibility(View.VISIBLE);
+                    executeSearch();
+                }
+            }
+        }
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        //Saving parcelable code adapted from : https://stackoverflow.com/a/12503875/9738433
+        if (!mList.isEmpty()){
+            outState.putParcelableArrayList("mList", mList);
+        }
+        super.onSaveInstanceState(outState);
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.settings_menu, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        int id = item.getItemId();
+        if (id == R.id.action_settings) {
+            Intent settingsIntent = new Intent(this, SettingsActivity.class);
+            startActivityForResult(settingsIntent,1);
+            return true;
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
     public void executeSearch() {
+
+        //Get user preferences
+        SharedPreferences sharedPrefs = PreferenceManager.getDefaultSharedPreferences(this);
+        String returnQuantity = sharedPrefs.getString(
+                getString(R.string.settings_return_quantity_key),
+                getString(R.string.settings_return_quantity_default));
+        String returnOrder = sharedPrefs.getString(
+                getString(R.string.settings_orderby_key),
+                getString(R.string.settings_orderby_newest));
+
+        // Build our Query URL
+        String queryURL = QueryUtils.queryRequestBuilder(this, returnQuantity, returnOrder);
+
+        Log.i(LOG_TAG, "TEST: " + queryURL);
 
         // Create loader from class, as opposed to implementing the LoaderManager withing MainActivity
         // Used assistance and code from: https://stackoverflow.com/a/20839825
-        newsQueryLoaderCallback = new NewsQueryCallback(this, GUARDIANAPI_REQUEST_URL, mList, mAdapter,
+        newsQueryLoaderCallback = new NewsQueryCallback(this, queryURL, mList, mAdapter,
                 mProgressRing, mEmptyStateTextView);
 
         boolean isConnected = QueryUtils.checkNetworkAccess(this);
@@ -126,7 +219,7 @@ public class MainActivity extends AppCompatActivity  {
             // Looks like we are good to go.
             mEmptyStateTextView.setVisibility(View.GONE);
             // Let's get our loader manager hooked up and started
-            getLoaderManager().initLoader(BOOKSEARCH_LOADER_ID, null, newsQueryLoaderCallback);
+            getLoaderManager().initLoader(API_REQUEST_LOADER_ID, null, newsQueryLoaderCallback);
         }
     }
 

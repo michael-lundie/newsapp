@@ -49,7 +49,7 @@ public class NewsAsyncLoader extends AsyncTaskLoader<ArrayList<NewsItem>> {
         if (!TextUtils.isEmpty(urlString)) {
             try {
                 // Everything is a-okay. Continue to fetch results.
-                ArrayList<NewsItem> resultItems = QueryUtils.fetchBookResults(urlString);
+                ArrayList<NewsItem> resultItems = QueryUtils.fetchQueryResults(urlString);
                 if (resultItems != null) {
                     // Fetch results are not null. Assign to our return variable.
                     bookQueryResults = resultItems;

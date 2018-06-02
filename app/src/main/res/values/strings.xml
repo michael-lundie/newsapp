@@ -4,7 +4,41 @@
     <string name="query_noresults">Sorry, no results.</string>
     <string name="no_connection">There is no internet connection. Please check your settings.</string>
     <string name="no_authors">Sorry! No authors listed.</string>
+    <string name="return_quantity_value_input_error">Please enter a value between 1 and 50.</string>
+    <!-- Settings Menu Item [CHAR LIMIT=NONE] -->
+    <string name="settings_menu_item">Settings</string>
+    <!-- Settings Activity Title [CHAR LIMIT=NONE] -->
+    <string name="settings_title">News Query Settings</string>
+    <!-- String for result quantity preference title [CHAR LIMIT=30] -->
+    <string name="settings_return_quantity_label">Quantity of results to return</string>
+    <!-- String for order by preference title [CHAR LIMIT=30] -->
+    <string name="settings_orderby_label">Order news articles by</string>
+    <!-- Order by preference strings[CHAR LIMIT=40] -->
+    <string-array name="settings_orderby_array_labels">
+        <item>newest first</item>
+        <item>most relevant</item>
+    </string-array>
 
-    <!-- API Strings -->
+    <!-- Preference string keys and values -->
+    <string name="settings_return_quantity_key" translatable="false">return_quantity</string>
+    <string name="settings_return_quantity_default" translatable="false">16</string>
+    <string name="settings_orderby_key" translatable="false">orderby</string>
+    <string-array name="settings_orderby_array_values" translatable="false">
+        <item>@string/settings_orderby_newest</item>
+        <item>@string/settings_orderby_relevance</item>
+    </string-array>
+    <string name="settings_orderby_newest" translatable="false">newest</string>
+    <string name="settings_orderby_relevance" translatable="false">relevance</string>
 
+    <!-- API Strings [CHAR LIMIT=NONE] -->
+    <string name="api_authority" translatable="false">content.guardianapis.com</string>
+    <string name="api_search_path" translatable="false">search</string>
+    <string name="api_query_param" translatable="false">q</string>
+    <string name="api_showTags_param" translatable="false">show-tags</string>
+    <string name="api_showTags_contributor_value" translatable="false">contributor</string>
+    <string name="api_showFields_param" translatable="false">show-fields</string>
+    <string name="api_showFields_thumbnail_value" translatable="false">thumbnail</string>
+    <string name="api_return_param" translatable="false">page-size</string>
+    <string name="api_key_param" translatable="false">api-key</string>
+    <string name="api_key_value" translatable="false">77f187f4-ede0-4ee7-a390-325df2d79fd3</string>
 </resources>

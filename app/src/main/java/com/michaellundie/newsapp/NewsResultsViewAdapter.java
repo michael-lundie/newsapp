@@ -1,11 +1,17 @@
 package com.michaellundie.newsapp;
 
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.drawable.BitmapDrawable;
+import android.net.Uri;
 import android.support.annotation.NonNull;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.RecyclerView;
+import android.text.Spannable;
+import android.text.SpannableString;
+import android.text.style.BackgroundColorSpan;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -13,7 +19,13 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.time.Instant;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -25,11 +37,15 @@ public class NewsResultsViewAdapter extends RecyclerView.Adapter<NewsResultsView
     public static final String LOG_TAG = NewsResultsViewAdapter.class.getSimpleName();
     private Context mContext;
     private final ArrayList<NewsItem> mValues;
+    private final int mPadding;
     private BitmapDrawable nothumbnail;
 
-    public NewsResultsViewAdapter(ArrayList<NewsItem> items, Context context) {
+
+
+    public NewsResultsViewAdapter(ArrayList<NewsItem> items, Context context, int padding) {
         mValues = items;
         mContext = context;
+        mPadding = padding;
         /*nothumbnail = new BitmapDrawable(BitmapFactory.decodeResource
                 (mContext.getResources(), R.drawable.no_thumbnail));*/
     }
@@ -45,11 +61,20 @@ public class NewsResultsViewAdapter extends RecyclerView.Adapter<NewsResultsView
     public void onBindViewHolder(final @NonNull NewsResultsViewAdapter.ViewHolder holder, int position) {
 
         holder.mItem = mValues.get(position);
-        holder.mTitleView.setText(mValues.get(position).getTitle());
+
+        SpannableString titleSpan = new SpannableString(mValues.get(position).getTitle());
+
+        holder.mTitleView.setShadowLayer(mPadding /* radius */, 0, 0, 0 /* transparent */);
+        holder.mTitleView.setPadding(mPadding, mPadding, mPadding, mPadding);
+        titleSpan.setSpan(
+                new PaddingBackgroundColorSpan(ContextCompat.getColor(holder.mTitleView.getContext(), R.color.colorAccent),
+                        mPadding),
+                0, titleSpan.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+        holder.mTitleView.setText(titleSpan);
 
         ArrayList<String> authorArray = holder.mItem.getAuthors();
-        String author_names = null;
 
+        String author_names = null;
         // Let's handle the authors data. First check if author data was returned.
         if(authorArray.isEmpty()){
             // No data: set string appropriately.
@@ -69,6 +94,36 @@ public class NewsResultsViewAdapter extends RecyclerView.Adapter<NewsResultsView
 
         // Set text for author names.
         holder.mAuthorView.setText(author_names);
+
+        // Get and set text for category
+
+        holder.mCategoryView.setText(holder.mItem.getSection());
+
+        // Set the url link for this article item
+
+        holder.mBrowserLinkView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent openUrlInBrowser = new Intent(Intent.ACTION_VIEW, Uri.parse(holder.mItem.getArticleURL()));
+                holder.mBrowserLinkView.getContext().startActivity(openUrlInBrowser);
+            }
+        });
+
+        //Get and set the date
+
+        DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
+        String parsedDate = null;
+
+        try {
+            Date date = dateFormat.parse(holder.mItem.getDatePublished());
+            DateFormat newDateFormat = new SimpleDateFormat("dd MMM, yyyy HH:mm");
+            parsedDate = newDateFormat.format(date);
+
+        } catch (ParseException e) {
+            Log.e(LOG_TAG, "Error parsing date.", e);
+            e.printStackTrace();
+        }
+        holder.mDateView.setText(parsedDate);
 
         // Set up our thumbnail imageView object.
         ImageView imageView = (ImageView) holder.mThumbnailView;
@@ -100,6 +155,10 @@ public class NewsResultsViewAdapter extends RecyclerView.Adapter<NewsResultsView
         // -End edit code from https://stackoverflow.com/a/22855962/9738433-
     }
 
+    // Override getItemViewType to prevent the random switch of images when scrolling.
+    @Override
+    public int getItemViewType(int position) { return position; }
+
     @Override
     public int getItemCount() {
         return mValues.size();
@@ -114,6 +173,9 @@ public class NewsResultsViewAdapter extends RecyclerView.Adapter<NewsResultsView
         final View mView;
         final TextView mTitleView;
         final TextView mAuthorView;
+        final TextView mCategoryView;
+        final TextView mBrowserLinkView;
+        final TextView mDateView;
         final Integer mThumbnailViewId;
         final ImageView mThumbnailView;
         final ProgressBar thumbnailProgressBar;
@@ -124,6 +186,9 @@ public class NewsResultsViewAdapter extends RecyclerView.Adapter<NewsResultsView
             mView = view;
             mTitleView = (TextView) view.findViewById(R.id.title);
             mAuthorView = (TextView) view.findViewById(R.id.author);
+            mCategoryView = (TextView) view.findViewById(R.id.category);
+            mBrowserLinkView = (TextView) view.findViewById(R.id.browserLink);
+            mDateView = (TextView) view.findViewById(R.id.date);
             mThumbnailView = (ImageView) view.findViewById(R.id.thumbnail);
             mThumbnailViewId = R.id.thumbnail;
             thumbnailProgressBar = (ProgressBar) view.findViewById(R.id.thumb_progress_spinner);

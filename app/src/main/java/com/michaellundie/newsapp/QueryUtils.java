@@ -36,33 +36,36 @@ public final class QueryUtils {
     /**
      * Method for building our query URL
      * @param context The current activity context.
-     * @param searchInput The search input from the user.
      * @return url string
      */
-    /*public static String queryRequestBuilder (Context context, String searchInput, String language){
+    public static String queryRequestBuilder (Context context, String returnQuantity, String orderByValue){
 
         //Set up our variables ready for our string builder
         //NOTE: Is it better to initialise these outside of this method? Are they recreated and
         // destroyed every time the method is called?
         final String API_AUTHORITY = context.getResources().getString(R.string.api_authority);
-        final String API_BOOKS_PATH = "books";
-        final String API_VERSION = context.getResources().getString(R.string.api_version);
-        final String API_VOLUMES_PATH = "volumes";
-        final String API_QUERY_PARAM = "q";
-        final String API_RESULTS_PARAM = "maxResults";
-        final String API_LANG_PARAM = "langRestrict";
-        final String API_RETURN_VALUE = context.getResources().getString(R.string.api_return_value);
+        final String API_SEARCH_PATH = context.getResources().getString(R.string.api_search_path);
+        final String API_SHOWTAGS_PARAM = context.getResources().getString(R.string.api_showTags_param);
+        final String API_SHOWFIELDS_PARAM = context.getResources().getString(R.string.api_showFields_param);
+        final String API_CONTRIBUTOR_VALUE = context.getResources().getString(R.string.api_showTags_contributor_value);
+        final String API_THUMBNAIL_VALUE = context.getResources().getString(R.string.api_showFields_thumbnail_value);
+        final String API_QUERY_PARAM = context.getResources().getString(R.string.api_query_param);
+        final String API_RESULTS_PARAM = context.getResources().getString(R.string.api_return_param);
+        final String API_ORDERBY_PARAM = "order-by";
+        final String API_KEY_PARAM = context.getResources().getString(R.string.api_key_param);
+        final String API_KEY_VALUE = context.getResources().getString(R.string.api_key_value);
 
         //Use URL builder to construct our URL
         Uri.Builder query = new Uri.Builder();
         query.scheme("https")
                 .authority(API_AUTHORITY)
-                .appendPath(API_BOOKS_PATH)
-                .appendPath(API_VERSION)
-                .appendPath(API_VOLUMES_PATH)
-                .appendQueryParameter(API_QUERY_PARAM, searchInput)
-                .appendQueryParameter(API_LANG_PARAM, language)
-                .appendQueryParameter(API_RESULTS_PARAM, API_RETURN_VALUE)
+                .appendPath(API_SEARCH_PATH)
+                .appendQueryParameter(API_QUERY_PARAM, "technology")
+                .appendQueryParameter(API_ORDERBY_PARAM, orderByValue)
+                .appendQueryParameter(API_SHOWTAGS_PARAM, API_CONTRIBUTOR_VALUE)
+                .appendQueryParameter(API_SHOWFIELDS_PARAM, API_THUMBNAIL_VALUE)
+                .appendQueryParameter(API_RESULTS_PARAM, returnQuantity)
+                .appendQueryParameter(API_KEY_PARAM, API_KEY_VALUE)
                 .build();
         URL returnUrl = null;
 
@@ -79,7 +82,7 @@ public final class QueryUtils {
             Log.i(LOG_TAG, "URL returned null.");
             return null;
         } return returnUrl.toString();
-    }*/
+    }
 
     /**
      * Query the Google Books API and return an {@link List<NewsItem>} object to represent a.
@@ -87,8 +90,8 @@ public final class QueryUtils {
      * @param requestUrl the URL for our API data request
      * @return parsed JSON query results (as a NewsItem object)
      */
-    public static ArrayList<NewsItem> fetchBookResults(String requestUrl) {
-        Log.i(LOG_TAG, "TEST: fetchBookResults: method called");
+    public static ArrayList<NewsItem> fetchQueryResults(String requestUrl) {
+        Log.i(LOG_TAG, "TEST: fetchQueryResults: method called");
         // Create URL object
         URL url = createUrl(requestUrl);
 
@@ -231,10 +234,15 @@ public final class QueryUtils {
 
                 String datePublished = currentArticleJsonO.optString("webPublicationDate");
 
+
+
+                Log.i(LOG_TAG, "TEST date QueryUtils:" + datePublished);
+
                 String articleURL = currentArticleJsonO.optString("webUrl");
 
                 // Okay. We need to go a little deeper down the JSON hierarchy to get our next results.
                 // Getting thumbnail URL from guardian API JSON object 'fields'
+
                 JSONObject fieldsJsonO = currentArticleJsonO.getJSONObject("fields");
                 String thumbnailURL;
                 if(fieldsJsonO != null) {
