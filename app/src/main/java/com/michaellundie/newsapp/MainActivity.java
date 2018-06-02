@@ -11,7 +11,6 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
-import android.util.Log;
 import android.util.TypedValue;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -118,10 +117,8 @@ public class MainActivity extends AppCompatActivity  {
         // Check to see if it is the first time loading our app.
         if (firstLoad) {
             mProgressRing.setVisibility(View.VISIBLE);
-            Log.i(LOG_TAG, "TEST: It's the first load");
             executeSearch();
             firstLoad = false;
-            Log.i(LOG_TAG, "TEST: Fist load is now" +firstLoad);
         }
     }
 

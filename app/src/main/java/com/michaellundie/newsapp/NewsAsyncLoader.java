@@ -42,7 +42,6 @@ public class NewsAsyncLoader extends AsyncTaskLoader<ArrayList<NewsItem>> {
     @Override
     public ArrayList<NewsItem> loadInBackground() {
         Log.i(LOG_TAG, "TEST: BookSearchAsyncLoader: loadInBackground executed");
-
         //Let's check to make sure our URL isn't empty for some reason.
         //We should never have spaces before or after our URL here. Not using trim()
         if (!TextUtils.isEmpty(urlString)) {

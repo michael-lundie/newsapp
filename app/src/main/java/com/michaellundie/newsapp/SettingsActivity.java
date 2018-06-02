@@ -61,15 +61,10 @@ public class SettingsActivity extends AppCompatActivity {
             super.onCreate(savedInstanceState);
 
             addPreferencesFromResource(R.xml.settings_main);
-
             returnQuantity = findPreference(getString(R.string.settings_return_quantity_key));
             bindPreferenceSummaryToValue(returnQuantity);
-            Log.i(LOG_TAG, "TEST preference quantity:" + returnQuantity);
-
             returnOrder = findPreference(getString(R.string.settings_orderby_key));
             bindPreferenceSummaryToValue(returnOrder);
-            Log.i(LOG_TAG, "TEST preference order:" + returnOrder);
-
         }
 
         /**

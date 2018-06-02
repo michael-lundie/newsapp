@@ -92,7 +92,6 @@ public final class QueryUtils {
      * @return parsed JSON query results (as a NewsItem object)
      */
     public static ArrayList<NewsItem> fetchQueryResults(String requestUrl) {
-        Log.i(LOG_TAG, "TEST: fetchQueryResults: method called");
         // Create URL object
         URL url = createUrl(requestUrl);
 

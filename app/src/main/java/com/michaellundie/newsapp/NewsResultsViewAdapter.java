@@ -131,8 +131,6 @@ public class NewsResultsViewAdapter extends RecyclerView.Adapter<NewsResultsView
         // Fetch the URL we will use for downloading our image
         String dataItem = holder.mItem.getThumbnailURL();
 
-        Log.i(LOG_TAG, "TEST: URL at adapter:" + dataItem);
-
         // -Begin edited code from https://stackoverflow.com/a/22855962/9738433-
         BitmapDrawable image = CacheManager.getInstance().getBitmapFromMemCache(holder.mItem.getItemID());
 
