@@ -40,5 +40,5 @@
     <string name="api_showFields_thumbnail_value" translatable="false">thumbnail</string>
     <string name="api_return_param" translatable="false">page-size</string>
     <string name="api_key_param" translatable="false">api-key</string>
-    <string name="api_key_value" translatable="false">77f187f4-ede0-4ee7-a390-325df2d79fd3</string>
+    <string name="api_key_value" translatable="false"></string>
 </resources>
